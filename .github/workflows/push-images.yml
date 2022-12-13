@@ -1,0 +1,28 @@
+name: Push Images
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          # https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches
+          fetch-depth: 0
+      - name: Set up qemu
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: amd64,arm64
+      - name: Login registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Push images
+        env:
+          ON_PLUGINS: true
+        run: |
+          REGISTRY="ghcr.io/$(echo ${{ github.repository_owner }}/clusterpedia | tr "A-Z" "a-z")" make push-images

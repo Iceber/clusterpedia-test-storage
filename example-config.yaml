@@ -1,0 +1,10 @@
+type: mysql
+host: 127.0.0.1
+port: "3306"
+user: root
+password: dangerous0
+database: clusterpedia
+log:
+  stdout: true
+  colorful: true
+  slowThreshold: 100ms
